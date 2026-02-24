@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulario Unificado · MERMA</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header card">
+        <p class="eyebrow">Formulario unificado</p>
+        <h1>MERMA</h1>
+        <p>Selecciona la empresa para mostrar únicamente los campos necesarios.</p>
+      </header>
+
+      <form id="merma-form" class="card" novalidate>
+        <div class="grid grid--main">
+          <label>
+            <span>Empresa</span>
+            <select id="empresa" name="empresa" required>
+              <option value="">Selecciona una empresa</option>
+              <option value="latata">La Tata de la Libertad</option>
+              <option value="pandt">Pan de Tata</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Fecha</span>
+            <input type="date" id="fecha" name="fecha" required />
+          </label>
+
+          <label>
+            <span>Hora</span>
+            <div class="input-inline">
+              <input type="time" id="hora" name="hora" required />
+              <button type="button" id="hora-now-btn" class="btn btn--ghost btn--mini">Hoy</button>
+            </div>
+          </label>
+
+          <label>
+            <span>Sede</span>
+            <select id="sede" name="sede" required>
+              <option value="">Selecciona una sede</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Responsable</span>
+            <input type="text" id="responsable" name="responsable" placeholder="Nombre y apellido" required />
+          </label>
+        </div>
+
+        <section class="card card--nested">
+          <div class="section-head">
+            <h2>Productos</h2>
+            <button type="button" id="refresh-products" class="btn btn--ghost">Actualizar catálogo</button>
+          </div>
+
+          <div id="products-status" class="status">Selecciona una empresa para cargar productos.</div>
+
+          <div id="rows" class="rows"></div>
+
+          <div class="actions-left">
+            <button type="button" id="add-row" class="btn btn--ghost">Agregar producto</button>
+          </div>
+        </section>
+
+        <footer class="form-footer">
+          <button type="submit" class="btn">Enviar merma</button>
+        </footer>
+      </form>
+
+      <div id="message" class="message" aria-live="polite"></div>
+
+      <div id="confirm-modal" class="confirm-modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+        <div class="confirm-modal__backdrop" data-close-confirm></div>
+        <div class="confirm-modal__panel" role="document">
+          <header class="confirm-modal__header">
+            <h3 id="confirm-title">Confirmar envío</h3>
+            <button type="button" class="confirm-close" data-close-confirm aria-label="Cerrar">×</button>
+          </header>
+
+          <div class="confirm-modal__body">
+            <p>Verifica los datos antes de enviar.</p>
+            <div id="confirm-summary" class="confirm-summary"></div>
+
+            <label class="confirm-check">
+              <input type="checkbox" id="confirm-accept" />
+              <span>Confirmo que la información es correcta.</span>
+            </label>
+          </div>
+
+          <footer class="confirm-modal__actions">
+            <button type="button" class="btn btn--ghost" data-close-confirm>Volver</button>
+            <button type="button" class="btn" id="confirm-submit" disabled>Confirmar y enviar</button>
+          </footer>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      window.MERMA_CONFIG = {
+        LATATA_URL: 'https://script.google.com/macros/s/AKfycbww0FJk40ZeNaROG8RIkzNNviPnEZxgn96m_8ag7qUxutBa4Yl_dauQA9NNVOvI3Yw/exec',
+        PANDT_URL: 'https://script.google.com/macros/s/AKfycbww0FJk40ZeNaROG8RIkzNNviPnEZxgn96m_8ag7qUxutBa4Yl_dauQA9NNVOvI3Yw/exec',
+      };
+    </script>
+    <script src="script.js" defer></script>
+  </body>
+</html>
