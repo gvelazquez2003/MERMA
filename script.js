@@ -229,10 +229,9 @@ function addRow() {
   const productSelect = row.querySelector('[data-role="product"]');
   fillProductOptions(productSelect);
 
-  if (state.empresa === 'pandt') {
-    const loteInput = row.querySelector('[data-role="lote"]');
+  const loteInput = row.querySelector('[data-role="lote"]');
+  if (loteInput) {
     const updateLote = () => {
-      if (!loteInput) return;
       if (loteInput.dataset.manual === '1') return;
       loteInput.value = buildPanLote();
     };
@@ -247,6 +246,8 @@ function addRow() {
 }
 
 function latataRowTemplate() {
+  const motivos = getMotivosOptionsHtml();
+
   return `
     <label>
       <span>Producto</span>
@@ -256,14 +257,23 @@ function latataRowTemplate() {
       <span>Cantidad merma</span>
       <input type="number" min="1" step="1" value="1" data-role="qty" required />
     </label>
+    <label>
+      <span>Motivo</span>
+      <select data-role="motivo" required>
+        <option value="">Selecciona motivo</option>
+        ${motivos}
+      </select>
+    </label>
+    <label>
+      <span>Lote</span>
+      <input type="text" data-role="lote" placeholder="Ej: LT-230226" required />
+    </label>
     <button type="button" class="remove">Eliminar</button>
   `;
 }
 
 function pandtRowTemplate() {
-  const motivos = (CONFIG.pandt.motivos || [])
-    .map((motivo) => `<option value="${escapeHtml(motivo)}">${escapeHtml(motivo)}</option>`)
-    .join('');
+  const motivos = getMotivosOptionsHtml();
 
   return `
     <label>
@@ -287,6 +297,12 @@ function pandtRowTemplate() {
     </label>
     <button type="button" class="remove">Eliminar</button>
   `;
+}
+
+function getMotivosOptionsHtml() {
+  return (CONFIG.pandt.motivos || [])
+    .map((motivo) => `<option value="${escapeHtml(motivo)}">${escapeHtml(motivo)}</option>`)
+    .join('');
 }
 
 function fillProductOptions(selectEl) {
@@ -427,6 +443,8 @@ async function submitLatata(endpoint, rows) {
   const items = rows.map((row, index) => {
     const productCode = getRowValue(row, 'product');
     const qty = Number(getRowValue(row, 'qty'));
+    const motivo = getRowValue(row, 'motivo');
+    const lote = getRowValue(row, 'lote');
     const product = state.products.find((p) => p.code === productCode);
 
     if (!productCode || !product) {
@@ -435,12 +453,20 @@ async function submitLatata(endpoint, rows) {
     if (!Number.isFinite(qty) || qty <= 0) {
       throw new Error(`La cantidad en la fila ${index + 1} debe ser mayor a cero.`);
     }
+    if (!String(motivo || '').trim()) {
+      throw new Error(`Completa motivo en la fila ${index + 1}.`);
+    }
+    if (!String(lote || '').trim()) {
+      throw new Error(`Completa lote en la fila ${index + 1}.`);
+    }
 
     return {
       productCode: product.code,
       productName: product.description,
       unit: product.unit,
       cantidadMerma: qty,
+      motivo: String(motivo).trim(),
+      lote: String(lote).trim(),
     };
   });
 
@@ -464,6 +490,8 @@ async function submitLatata(endpoint, rows) {
 
   items.forEach((item, idx) => {
     fd.append(`prodCodigo_${idx}`, item.productCode || '');
+    fd.append(`motivo_${idx}`, item.motivo || '');
+    fd.append(`lote_${idx}`, item.lote || '');
   });
 
   const response = await fetch(endpoint, {
@@ -637,7 +665,7 @@ function buildConfirmationSummary(rows) {
     .map(([label, value]) => `<div><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</div>`)
     .join('');
 
-  const isPan = state.empresa === 'pandt';
+  const showMotivoLote = state.empresa === 'pandt' || state.empresa === 'latata';
 
   const rowsHtml = rows
     .map((row, index) => {
@@ -654,7 +682,7 @@ function buildConfirmationSummary(rows) {
           <td>${escapeHtml(code || '-')}</td>
           <td>${escapeHtml(name || '-')}</td>
           <td>${escapeHtml(qty || '-')}</td>
-          ${isPan ? `<td>${escapeHtml(motivo || '-')}</td><td>${escapeHtml(lote || '-')}</td>` : ''}
+          ${showMotivoLote ? `<td>${escapeHtml(motivo || '-')}</td><td>${escapeHtml(lote || '-')}</td>` : ''}
         </tr>
       `;
     })
@@ -670,7 +698,7 @@ function buildConfirmationSummary(rows) {
             <th>Código</th>
             <th>Producto</th>
             <th>Cantidad</th>
-            ${isPan ? '<th>Motivo</th><th>Lote</th>' : ''}
+            ${showMotivoLote ? '<th>Motivo</th><th>Lote</th>' : ''}
           </tr>
         </thead>
         <tbody>${rowsHtml}</tbody>
