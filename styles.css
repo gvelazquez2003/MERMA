@@ -29,6 +29,14 @@ body {
   gap: 16px;
 }
 
+.menu-link {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 100;
+  text-decoration: none;
+}
+
 .card {
   background: var(--card);
   border: 1px solid var(--border);
