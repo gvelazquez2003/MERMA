@@ -1,6 +1,27 @@
 'use strict';
 
 const CONFIG = {
+  motivosCompartidos: [
+    'Adherido a Bandeja/Molde/Aro',
+    'Adherido al Silpad',
+    'Burbuja/Mancha en la Corona',
+    'Alveolado/Cavidad',
+    'Crudo',
+    'Quemado',
+    'Color',
+    'Fermentado',
+    'Pan pequeño',
+    'Pan grande',
+    'Mal Formado',
+    'Deformado(Horno)',
+    'Mal corte',
+    'Manchado',
+    'Aplastado/Maltratado/Roto',
+    'Sobrante en buen estado',
+    'Caido al piso',
+    'Materia Extraña',
+    'Defecto de Mezcla',
+  ],
   latata: {
     label: 'La Tata de la Libertad',
     endpoint: (window.MERMA_CONFIG && window.MERMA_CONFIG.LATATA_URL) || '',
@@ -22,29 +43,6 @@ const CONFIG = {
       'Eliezer N',
       'Odalis',
       'Yosmar Blanco',
-    ],
-    motivos: [
-      'MANCHADOS',
-      'ERROR DE PROCESO',
-      'MAL FORMADO (HORNEADO)',
-      'QUEMADO',
-      'APLASTADOS',
-      'ROTOS',
-      'CAIDOS AL PISO',
-      'FERMENTADO',
-      'ALVEOLO',
-      'CRUDO',
-      'MAL FORMADO (BOLEADO)',
-      'MAL CORTE',
-      'OTROS',
-      'ADHERIDO A LA BANDEJA',
-      'DESMOLDADO',
-      'SOBRANTE BUEN ESTADO',
-      'MASA DE DESCARTE',
-      'PEQUEÑOS EN TAMAÑO',
-      'VIRUTA',
-      'SOBREPASA EL TAMAÑO ADECUADO',
-      'ADHERIDO AL MOLDE',
     ],
   },
 };
@@ -300,7 +298,7 @@ function pandtRowTemplate() {
 }
 
 function getMotivosOptionsHtml() {
-  return (CONFIG.pandt.motivos || [])
+  return (CONFIG.motivosCompartidos || [])
     .map((motivo) => `<option value="${escapeHtml(motivo)}">${escapeHtml(motivo)}</option>`)
     .join('');
 }
