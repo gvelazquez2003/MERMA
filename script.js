@@ -52,11 +52,6 @@ const state = {
   products: [],
 };
 
-const APPS_SCRIPT_FETCH_OPTIONS = {
-  credentials: 'include',
-  redirect: 'follow',
-};
-
 const form = document.getElementById('merma-form');
 const empresaSelect = document.getElementById('empresa');
 const fechaInput = document.getElementById('fecha');
@@ -616,7 +611,6 @@ async function safeJson(response) {
 async function fetchWithDiagnostics(url, options, actionLabel) {
   try {
     return await fetch(url, {
-      ...APPS_SCRIPT_FETCH_OPTIONS,
       ...(options || {}),
     });
   } catch (error) {
