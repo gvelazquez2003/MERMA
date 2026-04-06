@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/merma",
-      "destination": "https://script.google.com/macros/s/AKfycbx2cc3Uj6fc1K_-SkucEy8mhyRyzQa_p6AmOw-rEUGfV6X7yS2RWEASycmC91KDzjee9A/exec"
+      "destination": "https://script.google.com/macros/s/AKfycbzNEp4WFg6piHDTXL8zhpx6wO-NPbpa5KlKd4qD7vYMy6DqIexLY2C-RFKwFgWR9Os2dg/exec"
     }
   ]
 }
