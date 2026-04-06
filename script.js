@@ -52,6 +52,11 @@ const state = {
   products: [],
 };
 
+const APPS_SCRIPT_FETCH_OPTIONS = {
+  credentials: 'include',
+  redirect: 'follow',
+};
+
 const form = document.getElementById('merma-form');
 const empresaSelect = document.getElementById('empresa');
 const fechaInput = document.getElementById('fecha');
@@ -328,7 +333,7 @@ async function fetchProducts(showMessage) {
       ? 'action=getproducts&empresa=latata'
       : 'action=productos&empresa=pandt';
     const url = company.endpoint + (company.endpoint.includes('?') ? '&' : '?') + query;
-    const response = await fetch(url, { method: 'GET', cache: 'no-store' });
+    const response = await fetchWithDiagnostics(url, { method: 'GET', cache: 'no-store' }, 'cargar productos');
     const json = await response.json();
 
     if (state.empresa === 'latata') {
@@ -492,10 +497,10 @@ async function submitLatata(endpoint, rows) {
     fd.append(`lote_${idx}`, item.lote || '');
   });
 
-  const response = await fetch(endpoint, {
+  const response = await fetchWithDiagnostics(endpoint, {
     method: 'POST',
     body: fd,
-  });
+  }, 'enviar merma');
 
   const data = await safeJson(response);
   if (!response.ok || !data || (data.success !== true && data.ok !== true)) {
@@ -552,10 +557,10 @@ async function submitPan(endpoint, rows) {
   });
 
   const url = endpoint + (endpoint.includes('?') ? '&' : '?') + 'sheet=Merma';
-  const response = await fetch(url, {
+  const response = await fetchWithDiagnostics(url, {
     method: 'POST',
     body: fd,
-  });
+  }, 'enviar merma');
 
   const data = await safeJson(response);
   if (!response.ok || !data || data.ok !== true) {
@@ -605,6 +610,20 @@ async function safeJson(response) {
     return JSON.parse(text);
   } catch (error) {
     return null;
+  }
+}
+
+async function fetchWithDiagnostics(url, options, actionLabel) {
+  try {
+    return await fetch(url, {
+      ...APPS_SCRIPT_FETCH_OPTIONS,
+      ...(options || {}),
+    });
+  } catch (error) {
+    const baseMessage = `No se pudo ${actionLabel} en Apps Script.`;
+    const details = 'Verifica el deployment Web App como "Execute as: Me" y acceso "Anyone with the link", o inicia sesion Google en este navegador.';
+    const reason = error && error.message ? ` Detalle: ${error.message}` : '';
+    throw new Error(`${baseMessage} ${details}${reason}`);
   }
 }
 
